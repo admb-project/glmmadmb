@@ -420,14 +420,24 @@ SEPARABLE_FUNCTION void log_lik(int _i,const dvar_vector& tmpL,const dvar_vector
   switch(like_type_flag)
   {
     case 0:   // Poisson
-	if (poiss_prob_bound==0) {
-	    tmpl =  log_density_poisson(y(_i,1),lambda);
-	} else {
-          if (cph<5)
-	    tmpl = log(e3+exp(log_density_poisson(y(_i,1),lambda)));  // DF hack May 2013
+        if (cph < 2)
+        {
+           tmpl = -square(log(1.0+y(_i,1))-log(1.0+lambda));
+        }
+        else
+        {
+          if (poiss_prob_bound==0)
+          {
+            tmpl = log_density_poisson(y(_i,1),lambda);
+          }
           else
-	    tmpl = log(e4+exp(log_density_poisson(y(_i,1),lambda)));  // DF hack May 2013
-	}
+          {
+            if (cph<5)
+              tmpl = log(e3+exp(log_density_poisson(y(_i,1),lambda)));  // DF hack May 2013
+            else
+              tmpl = log(e4+exp(log_density_poisson(y(_i,1),lambda)));  // DF hack May 2013
+          }
+        }
       break;
     case 1:   // Binomial: y(_i,1)=#successes, y(_i,2)=#failures,
       if (p_y==1) {
